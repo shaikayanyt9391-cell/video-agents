@@ -16,6 +16,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg libnss3 libdbus-1-3 libatk1.0-0 libgbm-dev libasound2t64 libxrandr2 libxkbcommon-dev libxfixes3 libxcomposite1 libxdamage1 libatk-bridge2.0-0 libpango-1.0-0 libcairo2 libcups2
       - run: npm install
       - name: Run agents (skipped if no API key)
@@ -25,6 +28,15 @@ jobs:
         run: |
           npm install -g @anthropic-ai/claude-code
           npm run agents
+      - name: Audio to storyboard (skipped if no audio file)
+        run: |
+          FOUND=$(find . -maxdepth 2 -type f \( -name '*.mp3' -o -name '*.wav' -o -name '*.m4a' -o -name '*.ogg' \) -not -path './node_modules/*' -not -path './public/*' | head -1)
+          if [ -n "$FOUND" ]; then
+            pip install faster-whisper
+            python scripts/transcribe.py
+          else
+            echo "no audio file, using storyboard.json as is"
+          fi
       - name: Render both formats
         run: npm run make
       - uses: actions/upload-artifact@v4
