@@ -1,1 +1,43 @@
-
+name: make-video
+on:
+  schedule:
+    - cron: "0 6 * * *"   # daily 06:00 UTC
+  workflow_dispatch: {}    # manual button (works from the GitHub mobile site)
+permissions:
+  contents: write
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg libnss3 libdbus-1-3 libatk1.0-0 libgbm-dev libasound2t64 libxrandr2 libxkbcommon-dev libxfixes3 libxcomposite1 libxdamage1 libatk-bridge2.0-0 libpango-1.0-0 libcairo2 libcups2
+      - run: npm install
+      - name: Run agents (skipped if no API key)
+        if: ${{ env.HAS_KEY == 'true' }}
+        env:
+          HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          npm run agents
+      - name: Render both formats
+        run: npm run make
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: videos
+          path: |
+            output/*.mp4
+            errors.md
+            lessons.md
+      - name: Save lessons back to repo
+        if: always()
+        run: |
+          git config user.name "video-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add lessons.md errors.md ideas storyboard.json src templates || true
+          git commit -m "bot: update lessons and project" || echo "nothing to commit"
+          git push || true
