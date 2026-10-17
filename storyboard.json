@@ -1,0 +1,11 @@
+{
+  "name": "tonbox_promo",
+  "fps": 30,
+  "colors": { "bg": "#0b0f1a", "bg2": "#1b2a4a", "text": "#ffffff", "accent": "#4cc9f0" },
+  "scenes": [
+    { "title": "TonBox AI", "subtitle": "Free tools. No signup.", "seconds": 3 },
+    { "title": "Text to Speech", "subtitle": "Turn any text into natural voice", "seconds": 3 },
+    { "title": "Media Downloader", "subtitle": "Save clips in a few taps", "seconds": 3 },
+    { "title": "Try it now", "subtitle": "tonboxai.online", "seconds": 3 }
+  ]
+}

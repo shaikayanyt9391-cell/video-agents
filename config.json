@@ -1,0 +1,12 @@
+{
+  "brand": "TonBox AI",
+  "site": "tonboxai.online",
+  "niche": "free text-to-speech and media downloader tools",
+  "style": "dark theme, bold text, smooth motion",
+  "fps": 30,
+  "formats": {
+    "pc": { "width": 1920, "height": 1080 },
+    "mobile": { "width": 1080, "height": 1920 }
+  },
+  "videosPerRun": 1
+}
